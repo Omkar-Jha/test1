@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f5f8fa">
+    <meta name="description" content="An adaptive study companion that uses your notes to answer questions, show evidence, and guide practice.">
+    <title>Adaptive Learning and Knowledge Support</title>
+    <style>
+        :root {
+            color-scheme: light;
+            font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color: #18324a;
+            background: #f5f8fa;
+            font-synthesis: none;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            --ink: #18324a;
+            --muted: #53677a;
+            --teal: #087e83;
+            --blue: #176b88;
+            --line: #dce6ec;
+            --surface: #ffffff;
+            --soft: #eaf3f6;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-width: 320px;
+            min-height: 100vh;
+            margin: 0;
+            background:
+                radial-gradient(ellipse at 80% 0%, rgba(215, 234, 239, 0.42), transparent 38rem),
+                #f5f8fa;
+        }
+
+        a {
+            color: inherit;
+        }
+
+        .shell {
+            width: min(100% - 48px, 1000px);
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            min-height: 76px;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--ink);
+            font-size: 14px;
+            font-weight: 750;
+            text-decoration: none;
+        }
+
+        .brand-mark {
+            display: grid;
+            width: 34px;
+            height: 34px;
+            place-items: center;
+            border-radius: 9px;
+            background: #173f66;
+            color: #fff;
+        }
+
+        .brand-mark svg {
+            width: 19px;
+            height: 19px;
+        }
+
+        .workspace-link {
+            display: inline-flex;
+            min-height: 38px;
+            align-items: center;
+            justify-content: center;
+            padding: 0 13px;
+            border: 1px solid #cbdde3;
+            border-radius: 7px;
+            background: #fff;
+            color: #244a66;
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .workspace-link:hover {
+            border-color: var(--teal);
+            color: var(--teal);
+        }
+
+        main {
+            padding: 48px 0 54px;
+        }
+
+        .intro {
+            padding-bottom: 26px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .eyebrow {
+            margin: 0 0 7px;
+            color: var(--teal);
+            font-size: 13px;
+            font-weight: 750;
+            letter-spacing: 0.015em;
+        }
+
+        h1 {
+            margin: 0 0 9px;
+            color: var(--ink);
+            font-size: clamp(29px, 4vw, 39px);
+            font-weight: 680;
+            letter-spacing: -0.04em;
+            line-height: 1.13;
+        }
+
+        .intro-copy {
+            max-width: 730px;
+            margin: 0;
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.65;
+        }
+
+        .section {
+            padding-top: 25px;
+        }
+
+        .section-heading {
+            margin: 0 0 8px;
+            color: var(--blue);
+            font-size: 19px;
+            font-weight: 720;
+            letter-spacing: -0.02em;
+        }
+
+        .section-kicker {
+            margin: 0 0 7px;
+            color: var(--teal);
+            font-size: 11px;
+            font-weight: 750;
+            letter-spacing: 0.11em;
+            text-transform: uppercase;
+        }
+
+        .section-copy {
+            max-width: 850px;
+            margin: 0;
+            color: #344a5d;
+            font-size: 14px;
+            line-height: 1.65;
+        }
+
+        .statement-card {
+            padding: 19px 21px;
+            border: 1px solid var(--line);
+            border-left: 4px solid var(--teal);
+            border-radius: 8px;
+            background: var(--surface);
+        }
+
+        .statement-card .section-copy {
+            font-size: 14px;
+        }
+
+        .flow {
+            display: grid;
+            grid-template-columns: 1fr 28px 1fr 28px 1fr 28px 1fr 28px 1fr;
+            align-items: center;
+            gap: 9px;
+            margin-top: 15px;
+        }
+
+        .flow-step {
+            display: grid;
+            min-height: 69px;
+            place-items: center;
+            padding: 10px;
+            border: 1px solid #176b88;
+            border-radius: 7px;
+            background: #176b88;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1.4;
+            text-align: center;
+        }
+
+        .flow-step:first-child,
+        .flow-step:last-child {
+            border-color: #173f66;
+            background: #173f66;
+        }
+
+        .flow-arrow {
+            color: #08a293;
+            font-size: 23px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+            margin-top: 30px;
+        }
+
+        .content-panel {
+            padding: 21px 22px;
+            border: 1px solid var(--line);
+            border-radius: 9px;
+            background: rgba(255, 255, 255, 0.86);
+        }
+
+        .content-panel .section {
+            padding-top: 0;
+        }
+
+        .content-panel .section + .section {
+            margin-top: 24px;
+        }
+
+        .content-panel .section-heading {
+            font-size: 18px;
+        }
+
+        ul {
+            margin: 9px 0 0;
+            padding-left: 20px;
+            color: #344a5d;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        li::marker {
+            color: var(--teal);
+        }
+
+        .challenge {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 11px;
+            align-items: start;
+            margin-top: 24px;
+            padding: 15px 18px;
+            border: 1px solid #d4e6eb;
+            border-radius: 8px;
+            background: var(--soft);
+            color: #344a5d;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .challenge strong {
+            color: #087e83;
+            font-size: 11px;
+            letter-spacing: 0.06em;
+            white-space: nowrap;
+        }
+
+        footer {
+            display: flex;
+            min-height: 62px;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            border-top: 1px solid var(--line);
+            color: #718195;
+            font-size: 11px;
+        }
+
+        footer a {
+            color: #315872;
+            font-weight: 650;
+            text-decoration: none;
+        }
+
+        @media (max-width: 760px) {
+            .shell {
+                width: calc(100% - 36px);
+            }
+
+            main {
+                padding-top: 38px;
+            }
+
+            .flow {
+                grid-template-columns: 1fr;
+                gap: 7px;
+            }
+
+            .flow-step {
+                min-height: 48px;
+            }
+
+            .flow-arrow {
+                transform: rotate(90deg);
+                font-size: 20px;
+                line-height: 1;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+                margin-top: 24px;
+            }
+        }
+
+        @media (max-width: 460px) {
+            .shell {
+                width: calc(100% - 28px);
+            }
+
+            .header {
+                min-height: 68px;
+            }
+
+            .brand {
+                gap: 8px;
+                font-size: 12px;
+            }
+
+            .workspace-link {
+                min-height: 34px;
+                padding: 0 9px;
+                font-size: 11px;
+            }
+
+            .content-panel {
+                padding: 18px;
+            }
+
+            .challenge {
+                grid-template-columns: 1fr;
+                gap: 5px;
+            }
+
+            footer {
+                align-items: flex-start;
+                flex-direction: column;
+                justify-content: center;
+                padding: 13px 0;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="shell header">
+        <a class="brand" href="#home" aria-label="Academic Study Companion home">
+            <span class="brand-mark" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5v-16Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+                    <path d="M4 5.5v16M8 7h8M8 10h7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                </svg>
+            </span>
+            <span>Academic Study Companion</span>
+        </a>
+        <a class="workspace-link" href="http://localhost:8501">Open study workspace <span aria-hidden="true">&nbsp;↗</span></a>
+    </header>
+
+    <main id="home" class="shell">
+        <section class="intro" aria-labelledby="page-title">
+            <p class="eyebrow">Study Companion from Real Notes</p>
+            <h1 id="page-title">Adaptive Learning and Knowledge Support</h1>
+            <p class="intro-copy">A focused study experience that uses your material as its source, makes supporting evidence visible, and helps you learn from practice.</p>
+        </section>
+
+        <section class="section" aria-labelledby="background-title">
+            <p class="section-kicker">The opportunity</p>
+            <h2 id="background-title" class="section-heading">Problem background</h2>
+            <p class="section-copy">Students often revise from lectures, notes, and short PDFs that may not be easy to understand. A generic chatbot can answer from broad knowledge even when the answer is absent from the study material. Learners need a way to identify what their notes actually say, what remains unclear, and which claims are supported by the source.</p>
+        </section>
+
+        <section class="section statement-card" aria-labelledby="statement-title">
+            <p class="section-kicker">What we are building</p>
+            <h2 id="statement-title" class="section-heading">Problem statement</h2>
+            <p class="section-copy">Build an AI-powered study companion that turns user-provided learning material into an interactive tutoring session. Students select one topic, upload or paste their notes, ask questions, inspect supporting evidence, and practice with targeted feedback. This prototype focuses on one academic topic and a small set of learning materials rather than a full learning-management system.</p>
+        </section>
+
+        <section class="section" aria-labelledby="solution-title">
+            <p class="section-kicker">A simple, inspectable learning loop</p>
+            <h2 id="solution-title" class="section-heading">Expected solution</h2>
+            <p class="section-copy">Use local AI to interpret the material while keeping the source visible and making gaps explicit.</p>
+            <div class="flow" aria-label="Upload or paste notes, ask a question, inspect evidence, answer a practice quiz, receive feedback">
+                <div class="flow-step">Upload / paste<br>notes</div>
+                <span class="flow-arrow" aria-hidden="true">→</span>
+                <div class="flow-step">Ask a<br>question</div>
+                <span class="flow-arrow" aria-hidden="true">→</span>
+                <div class="flow-step">Inspect<br>evidence</div>
+                <span class="flow-arrow" aria-hidden="true">→</span>
+                <div class="flow-step">Answer practice<br>quiz</div>
+                <span class="flow-arrow" aria-hidden="true">→</span>
+                <div class="flow-step">Receive<br>feedback</div>
+            </div>
+        </section>
+
+        <div class="content-grid">
+            <div class="content-panel">
+                <section class="section" aria-labelledby="requirements-title">
+                    <h2 id="requirements-title" class="section-heading">Core requirements</h2>
+                    <ul>
+                        <li>Upload or paste notes, including text-based PDFs, for one selected topic.</li>
+                        <li>Answer questions from supplied material and show identifiable supporting evidence.</li>
+                        <li>Generate a relevant practice question and evaluate the student's response.</li>
+                        <li>Explain incorrect answers and provide actionable hints.</li>
+                        <li>Clearly say when the notes do not contain enough information.</li>
+                        <li>Use a local Ollama model for interpretation and learning support.</li>
+                    </ul>
+                </section>
+                <section class="section" aria-labelledby="checklist-title">
+                    <h2 id="checklist-title" class="section-heading">Demonstration checklist</h2>
+                    <ul>
+                        <li>Load sample notes for one topic.</li>
+                        <li>Ask a supported question and inspect the source lines.</li>
+                        <li>Submit an incorrect quiz answer and review the explanation.</li>
+                        <li>Ask an unsupported question and confirm the limitation is clear.</li>
+                    </ul>
+                </section>
+            </div>
+            <div class="content-panel">
+                <section class="section" aria-labelledby="directions-title">
+                    <h2 id="directions-title" class="section-heading">Possible directions</h2>
+                    <ul>
+                        <li>Explain supplied notes, documents, diagrams, or study material.</li>
+                        <li>Generate practice activities, feedback, or learning plans.</li>
+                        <li>Answer questions with identifiable evidence from the supplied material.</li>
+                        <li>Adapt explanations to the learner's progress.</li>
+                    </ul>
+                </section>
+                <section class="section" aria-labelledby="trust-title">
+                    <h2 id="trust-title" class="section-heading">Grounded by design</h2>
+                    <p class="section-copy">Relevant source lines are retrieved before an answer is generated. The local model is instructed to stay within those lines, and quiz answers are checked against an exact quote from the notes.</p>
+                </section>
+            </div>
+        </div>
+
+        <aside class="challenge" aria-label="Core challenge">
+            <strong>CORE CHALLENGE</strong>
+            <span>Use local AI to support learning while showing source evidence, validating generated practice, and clearly communicating when an answer is not in the notes.</span>
+        </aside>
+    </main>
+
+    <footer class="shell">
+        <span>Academic Study Companion · Evidence-first learning support</span>
+        <a href="http://localhost:8501">Open the study workspace ↗</a>
+    </footer>
+</body>
+</html>
